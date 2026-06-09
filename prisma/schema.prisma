@@ -1,0 +1,43 @@
+generator client {
+    provider = "prisma-client"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+enum ChatType {
+    DIRECT
+    GROUP
+}
+
+model User {
+    id         String   @id() @default(uuid())
+    name       String
+    email      String
+    phone      String?
+    password   String
+    created_at DateTime
+}
+
+model Conversations {
+    id         String   @id() @default(uuid())
+    type       ChatType
+    created_at DateTime
+}
+
+model Conversation_Members {
+    id              String   @id() @default(uuid())
+    conversation_id String
+    user_id         String
+    joined_at       DateTime
+}
+
+model Messages {
+    id              String   @id() @default(uuid())
+    conversation_id String
+    sender_id       String
+    content         String
+    created_at      DateTime
+}
