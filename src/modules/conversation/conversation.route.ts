@@ -5,4 +5,6 @@ const router = Router();
 
 router.post("/direct", ConversationControllers.createOrGetDirectConversation);
 
+router.get("/", ConversationControllers.getConversationList);
+
 export const ConversationRoutes = router;

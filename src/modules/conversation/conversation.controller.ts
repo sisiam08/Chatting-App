@@ -25,6 +25,25 @@ const createOrGetDirectConversation = async (req: Request, res: Response) => {
   }
 };
 
+const getConversationList = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id!;
+
+    const result = await ConversationServices.getConversationList(userId);
+
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export const ConversationControllers = {
   createOrGetDirectConversation,
+  getConversationList,
 };
