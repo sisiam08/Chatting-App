@@ -1,0 +1,11 @@
+import { Request, Response } from "express";
+import status from "http-status";
+
+export const notFoundMiddleware = (req: Request, res: Response) => {
+  res.status(status.NOT_FOUND).json({
+    success: false,
+    message: "The requested resource was not found",
+    error: `Cannot ${req.method} ${req.originalUrl}`,
+    statusCode: "notfound",
+  });
+};

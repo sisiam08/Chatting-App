@@ -2,6 +2,8 @@ import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { cloudinaryUpload } from "./cloudinary.config";
 import { handleMulterErrors } from "../errors/multerErrors";
+import status from "http-status";
+import createAppError from "../errors/appError";
 
 const ALLOWED_MIME_TYPES = [
   "image/jpeg",
@@ -23,9 +25,11 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => {
     try {
       if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-        throw new Error(
-          `File type not allowed. Allowed types: ${ALLOWED_MIME_TYPES.join(", ")}`
+        createAppError(
+          `File type not allowed. Allowed types: ${ALLOWED_MIME_TYPES.join(", ")}`,
+          status.BAD_REQUEST,
         );
+        return;
       }
 
       const originalName = file.originalname;
@@ -65,7 +69,8 @@ const storage = new CloudinaryStorage({
       };
     } catch (error) {
       console.error("Error in multer params:", error);
-      throw error;
+      createAppError("Error occurred while processing file", status.INTERNAL_SERVER_ERROR);
+      return;
     }
   },
 });
@@ -80,8 +85,8 @@ export const upload = multer({
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       return cb(
         new Error(
-          `File type not allowed. Allowed types: images, PDFs, documents, PowerPoints, and text files`
-        )
+          `File type not allowed. Allowed types: images, PDFs, documents, PowerPoints, and text files`,
+        ),
       );
     }
     cb(null, true);

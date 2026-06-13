@@ -1,4 +1,5 @@
-import { getIO } from "../../config/socket.config";
+import status from "http-status";
+import createAppError from "../../errors/appError";
 import { MessageType } from "../../generated/prisma/enums";
 import { ISocketMessagePayload } from "../../interfaces";
 import { broadcastNewMessage } from "./message.helper";
@@ -11,7 +12,8 @@ const sendTextMessage = (socket: any) => {
 
     const hasAccess = socket.data.allowedRooms?.has(conversationId);
     if (!hasAccess) {
-      throw new Error("User does not have access to this conversation");
+      createAppError("User does not have access to this conversation", status.FORBIDDEN);
+      return;
     }
 
     const message = await MessageServices.sendMessage({
@@ -31,7 +33,8 @@ const seenMessage = (socket: any) => {
 
     const hasAccess = socket.data.allowedRooms?.has(conversationId);
     if (!hasAccess) {
-      throw new Error("User does not have access to this conversation");
+      createAppError("User does not have access to this conversation", status.FORBIDDEN);
+      return;
     }
 
     await MessageServices.updateMessageSeen(conversationId, userId);

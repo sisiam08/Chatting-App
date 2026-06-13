@@ -1,3 +1,5 @@
+import status from "http-status";
+import createAppError from "../../errors/appError";
 import { prisma } from "../../lib/prisma";
 
 const joinConversation = (socket: any) => {
@@ -20,7 +22,11 @@ const joinConversation = (socket: any) => {
       },
     });
     if (!isMember) {
-      throw new Error("User is not a member of the conversation");
+      createAppError(
+        "User is not a member of the conversation",
+        status.FORBIDDEN,
+      );
+      return;
     }
 
     socket.data.allowedRooms.add(conversationId);

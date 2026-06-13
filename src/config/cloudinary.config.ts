@@ -1,5 +1,7 @@
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { envVar } from "./env";
+import status from "http-status";
+import createAppError from "../errors/appError";
 
 cloudinary.config({
   cloud_name: envVar.cloudinary.cloudinaryCloudName,
@@ -12,7 +14,7 @@ export const uploadFileToCloudinary = async (
   fileName: string,
 ): Promise<UploadApiResponse> => {
   if (!buffer || !fileName) {
-    throw new Error("File buffer and file name are required for upload");
+    createAppError("File buffer and file name are required for upload", status.BAD_REQUEST);
   }
 
   const extension = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
@@ -76,7 +78,7 @@ export const deleteFileFromCloudinary = async (url: string) => {
     }
   } catch (error) {
     console.error("Error occurred while deleting file from Cloudinary:", error);
-    throw new Error("Failed to delete file from Cloudinary");
+    createAppError("Failed to delete file from Cloudinary", status.INTERNAL_SERVER_ERROR);
   }
 };
 

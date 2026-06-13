@@ -5,6 +5,8 @@ import cors from "cors";
 import { envVar } from "./config/env";
 import { auth } from "./lib/auth";
 import router from "./routes";
+import { notFoundMiddleware } from "./middleware/notFound";
+import { globalErrorHandler } from "./middleware/globalErrorHandler";
 
 const app: Application = express();
 
@@ -19,6 +21,8 @@ app.use(
 
 app.use("/api/auth/*splat", toNodeHandler(auth));
 
+app.use(express.urlencoded({ extended: true }));
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -30,5 +34,9 @@ app.get("/", async (req: Request, res: Response) => {
     message: "API is working",
   });
 });
+
+app.use(notFoundMiddleware);
+
+app.use(globalErrorHandler);
 
 export default app;

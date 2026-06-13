@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import status from "http-status";
 import multer from "multer";
 
 export const handleMulterErrors = (
@@ -10,7 +11,7 @@ export const handleMulterErrors = (
   if (err instanceof multer.MulterError) {
     // File size exceeds limit
     if (err.code === "LIMIT_FILE_SIZE") {
-      return res.status(400).json({
+      return res.status(status.BAD_REQUEST).json({
         success: false,
         message: "File size exceeds the maximum limit of 50MB",
         errorSource: [
@@ -24,7 +25,7 @@ export const handleMulterErrors = (
 
     // Number of files exceeds limit
     if (err.code === "LIMIT_FILE_COUNT") {
-      return res.status(400).json({
+      return res.status(status.BAD_REQUEST).json({
         success: false,
         message: "Only one file is allowed per upload",
         errorSource: [
@@ -38,7 +39,7 @@ export const handleMulterErrors = (
 
     // Unexpected field name
     if (err.code === "LIMIT_UNEXPECTED_FILE") {
-      return res.status(400).json({
+      return res.status(status.BAD_REQUEST).json({
         success: false,
         message: "Unexpected field name. Expected 'image' field",
         errorSource: [
@@ -51,7 +52,7 @@ export const handleMulterErrors = (
     }
 
     // Generic multer error
-    return res.status(400).json({
+    return res.status(status.BAD_REQUEST).json({
       success: false,
       message: `File upload error: ${err.message}`,
       errorSource: [

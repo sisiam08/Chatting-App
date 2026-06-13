@@ -1,3 +1,5 @@
+import status from "http-status";
+import createAppError from "../../errors/appError";
 import { MessageType } from "../../generated/prisma/enums";
 import { ICreateMessagePayload } from "../../interfaces";
 import { prisma } from "../../lib/prisma";
@@ -59,7 +61,8 @@ const getMessages = async (
   });
 
   if (!conversation) {
-    throw new Error("Conversation not found");
+    createAppError("Conversation not found", status.NOT_FOUND);
+    return;
   }
 
   const data = await prisma.message.findMany({

@@ -16,3 +16,5 @@ declare global {
 
 export type * from "./route.type";
 export type * from "./message.type";
+export type * from "./user.type";
+export type * from "./error.type";

@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { MessageServices } from "./message.service";
 import { MessageType } from "../../generated/prisma/enums";
-import { getIO } from "../../config/socket.config";
 import { broadcastNewMessage } from "./message.helper";
+import status from "http-status";
+import createAppError from "../../errors/appError";
 
 const sendFileMessage = async (req: Request, res: Response) => {
   try {
@@ -11,7 +12,7 @@ const sendFileMessage = async (req: Request, res: Response) => {
     const file = req.file as Express.Multer.File;
 
     if (!file) {
-      return res.status(400).json({
+      return res.status(status.BAD_REQUEST).json({
         success: false,
         message: "File cannot found!",
         data: null,
@@ -32,13 +33,13 @@ const sendFileMessage = async (req: Request, res: Response) => {
 
     await broadcastNewMessage(conversationId, userId, message);
 
-    res.status(200).json({
+    return res.status(status.OK).json({
       success: true,
       message: "File message sent successfully",
       data: message,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Failed to send message",
       data: null,
@@ -51,7 +52,8 @@ const getMessages = async (req: Request, res: Response) => {
     const { participantId } = req.params;
 
     if (!participantId || typeof participantId !== "string") {
-      throw new Error("Participant not found");
+      createAppError("Participant not found", status.BAD_REQUEST);
+      return;
     }
 
     const userId = req.user?.id!;
@@ -66,13 +68,13 @@ const getMessages = async (req: Request, res: Response) => {
       limit,
     );
 
-    return res.status(200).json({
+    return res.status(status.OK).json({
       success: true,
       message: "Messages retrieved successfully",
       data: result,
     });
   } catch (error: any) {
-    return res.status(500).json({
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Failed to retrieve messages",
       data: null,
