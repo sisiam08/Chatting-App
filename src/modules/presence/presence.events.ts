@@ -13,8 +13,6 @@ const onlineUser = async (socket: any) => {
         true,
       );
 
-      const messagedDe
-
       socket.broadcast.emit("user:status_change", {
         userId: onlineStatus.id,
         isOnline: onlineStatus.isOnline,
