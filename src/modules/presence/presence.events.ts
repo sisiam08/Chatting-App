@@ -1,4 +1,4 @@
-import { getIO } from "../../config/socket";
+import { getIO } from "../../config/socket.config";
 import { PresenceServices } from "./presence.service";
 
 const onlineUser = async (socket: any) => {
@@ -8,7 +8,12 @@ const onlineUser = async (socket: any) => {
 
   if (connectedDevicesCount === 1) {
     try {
-      const onlineStatus = await PresenceServices.updateOnlineStatus(userId, true);
+      const onlineStatus = await PresenceServices.updateOnlineStatus(
+        userId,
+        true,
+      );
+
+      const messagedDe
 
       socket.broadcast.emit("user:status_change", {
         userId: onlineStatus.id,
@@ -28,7 +33,10 @@ const offlineUser = (socket: any) => {
 
     if (connectedDevicesCount === 0) {
       try {
-        const offlineStatus = await PresenceServices.updateOnlineStatus(userId, false);
+        const offlineStatus = await PresenceServices.updateOnlineStatus(
+          userId,
+          false,
+        );
 
         getIO().emit("user:status_change", {
           userId: offlineStatus.id,
